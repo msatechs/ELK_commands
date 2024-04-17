@@ -1,0 +1,12 @@
+# convert es ca to ca.pem and use it in --fleet-server-es-ca
+openssl x509 -in ca -out ca.pem
+
+
+# You can create new CA with ca.crt and ca.key to use for --certificate-authorities
+usr/share/elasticsearch/bin/elasticsearch-certutil ca --pem
+
+# Use that new CA to create --fleet-server-cert and --fleet-server-cert-key
+usr/share/elasticsearch/bin/elasticsearch-certutil cert --name fleet-server --ca-cert /path/to/ca/ca.crt --ca-key /path/to/ca/ca.key --ip 192.0.2.1 --pem
+
+#command to install fleet 
+sudo ./elastic-agent install --url=https://10.2.58.17:8220   --fleet-server-es=https://10.2.58.16:9200   --fleet-server-service-token=AAEAAWVsYXN0aWMvZmxlZXQtc2VydmVyL3Rva2VuLTE3MDU0ODUyNDY4ODc6LVZLMWM0UFFSM3lWMWd3Z1hhREowZw   --fleet-server-policy=fleet-server-policy  --certificate-authorities=/etc/kibana/fleet_certs/ca.pem   --fleet-server-es-ca=/etc/kibana/fleet_certs/es-ca.pem   --fleet-server-cert=/etc/kibana/fleet_certs/fleet-cert.pem --fleet-server-cert-key=/etc/kibana/fleet_certs/fleet-server.pem -i
