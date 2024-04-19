@@ -1,0 +1,48 @@
+{
+  "trigger": {
+    "schedule": {
+      "interval": "12h"
+    }
+  },
+  "input": {
+    "search": {
+      "request": {
+        "search_type": "query_then_fetch",
+        "indices": [
+          "*cisco*"
+        ],
+        "rest_total_hits_as_int": true,
+        "body": {
+          "size": 0,
+          "query": {
+            "bool": {
+              "must": [
+                {
+                  "range": {
+                    "@timestamp": {
+                      "gte": "now-12h"
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "condition": {
+    "script": {
+      "source": "ctx.payload.hits.total == 0",
+      "lang": "painless"
+    }
+  },
+  "actions": {
+    "log_alert": {
+      "logging": {
+        "level": "info",
+        "text": "Index returned {{ctx.payload.hits.total}} documents in the last 12 hours, this might indicate that all Cisco devices have stopped sending logs."
+      }
+    }
+  }
+}
